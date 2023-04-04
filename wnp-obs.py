@@ -12,9 +12,10 @@ CoverUrl = 'https://keifufu.dev/wnpredux/nocover.png'
 format = '{title} - {artist} ({position}/{duration})'
 
 def script_description():
-  description = 'Web Now Playing for OBS'
-  description += 'Display current song as a text on your screen.'
+  description = '<b>WebNowPlaying for OBS</b>'
+  description += '<br>'
   description += 'Available placeholders:'
+  description += '<br>'
   description += '{player}, {title}, {artist}, {album}, {duration}, {position}'
   return description
 
