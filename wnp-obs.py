@@ -7,9 +7,9 @@ Artist = 'N/A'
 Album = 'N/A'
 Duration = '0:00'
 Position = '0:00'
-CoverUrl = 'https://keifufu.dev/wnpredux/nocover.png'
-
-format = '{title} - {artist} ({position}/{duration})'
+CoverUrl = ''
+DefaultCoverUrl = 'https://keifufu.dev/wnpredux/nocover.png'
+format = '{title} - {artist} ({position}/{duration})    '
 
 def script_description():
   description = '<b>WebNowPlaying for OBS</b>'
@@ -21,16 +21,19 @@ def script_description():
 
 def script_defaults(settings):
   obs.obs_data_set_default_string(settings, 'format', format)
+  obs.obs_data_set_default_string(settings, 'default_cover_url', 'https://keifufu.dev/wnpredux/nocover.png')
 
 def script_properties():
   props = obs.obs_properties_create()
   obs.obs_properties_add_text(props, 'format', 'Format', obs.OBS_TEXT_DEFAULT)
   obs.obs_properties_add_button(props, 'cs', 'Create Sources', create_sources)
+  obs.obs_properties_add_text(props, 'default_cover_url', 'Default Cover URL', obs.OBS_TEXT_DEFAULT)
   return props
 
 def script_update(settings):
-  global format
+  global format, DefaultCoverUrl
   format = obs.obs_data_get_string(settings, 'format')
+  DefaultCoverUrl = obs.obs_data_get_string(settings, 'default_cover_url')
 
 def script_load(settings):
   def logger(type, message):
@@ -51,14 +54,14 @@ def update():
     Album = WNPRedux.mediaInfo.Album or 'N/A'
     Duration = WNPRedux.mediaInfo.Duration
     Position = WNPRedux.mediaInfo.Position
-    CoverUrl = WNPRedux.mediaInfo.CoverUrl or 'https://keifufu.dev/wnpredux/nocover.png'
+    CoverUrl = WNPRedux.mediaInfo.CoverUrl
     update_source('Player', 'text', Player)
     update_source('Title', 'text', Title)
     update_source('Artist', 'text', Artist)
     update_source('Album', 'text', Album)
     update_source('Duration', 'text', Duration)
     update_source('Position', 'text', Position)
-    update_source('Cover', 'url', CoverUrl)
+    update_source('Cover', 'url', CoverUrl or DefaultCoverUrl)
     try:
       update_source('Formatted', 'text', format.format(player=Player, title=Title, artist=Artist, album=Album, duration=Duration, position=Position))
     except:
