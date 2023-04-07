@@ -63,7 +63,7 @@ def script_update(settings):
 def script_load(settings):
   def logger(type, message):
     print(f'WNP - {type}: {message}')
-  WNPRedux.Initialize(6534, '1.0.1', logger)
+  WNPRedux.Initialize(6534, '1.1.0', logger)
   obs.timer_add(update, 250)
 
 def script_unload():
