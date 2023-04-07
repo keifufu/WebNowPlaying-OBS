@@ -15,7 +15,7 @@ CoverUrl = ''
 # Script Settings
 SelectedWidget = 'None'
 WidgetsManifest = None
-DefaultCoverUrl = 'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
+DefaultCoverUrl = 'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
 CustomFormat = '{title} - {artist} ({position}/{duration})    '
 
 CustomCSS = r'body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; } '
@@ -38,7 +38,7 @@ def script_properties():
 
   list = obs.obs_properties_add_list(props, 'selected_widget', 'Widget', obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
   obs.obs_property_list_add_string(list, 'None', 'None')
-  req = urllib.request.Request('https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0'})
+  req = urllib.request.Request('https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0'})
   with urllib.request.urlopen(req) as url:
     data = json.loads(url.read().decode())
     global WidgetsManifest
