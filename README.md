@@ -1,17 +1,11 @@
 # OBS Adapter for WebNowPlaying-Redux
 A OBS script to display information from [WebNowPlaying-Redux](https://github.com/keifufu/WebNowPlaying-Redux)
 
-This scripts adds sources for:
-- Player
-- Title
-- Artist
-- Album
-- Duration
-- Position
-- Cover Art
-- A custom format like "{artist} - {title} ({position}/{duration})"
+![widgets](./images/widgets.jpg)
 
-You can modify these sources however you want, the script will only update the text.  
+This script adds widgets as seen above, it also lets you add a formatted text source like "{artist} - {title}", and individual sources for Title, Artist, etc. so you can do whatever you want!
+
+You can modify the text sources however you want, the script will only update the text.  
 If you delete a source, it will stay deleted until you click "Create Sources" again.
 
 # Installing
