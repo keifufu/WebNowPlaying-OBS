@@ -16,7 +16,7 @@ If you delete a source, it will stay deleted until you click "Create Sources" ag
 ### Installing the script
 - Open cmd and run `pip install pywnp`
 - Download wnp-obs.py from [Releases](https://github.com/keifufu/WebNowPlaying-Redux-OBS/releases/latest), then add it in the Scripts tab.
-- Click "Create Sources" in the Scripts window.
+- Select a Widget or click "Create Sources" in the Scripts window.
 
 # Updating
 - Replace wnp-obs.py with the latest wnp-obs.py from [Releases](https://github.com/keifufu/WebNowPlaying-Redux-OBS/releases/latest)
