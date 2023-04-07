@@ -15,9 +15,10 @@ CoverUrl = ''
 # Script Settings
 SelectedWidget = 'None'
 WidgetsManifest = None
-DefaultCoverUrl = 'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
+DefaultCoverUrl = ''
 CustomFormat = '{title} - {artist} ({position}/{duration})    '
 
+FallbackDefaultCoverUrl = 'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
 CustomCSS = r'body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; } '
 CustomCSS += r':root { --default-cover-url: url("{DefaultCoverUrl}"); }'
 
@@ -38,7 +39,7 @@ def script_properties():
 
   list = obs.obs_properties_add_list(props, 'selected_widget', 'Widget', obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
   obs.obs_property_list_add_string(list, 'None', 'None')
-  req = urllib.request.Request('https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0'})
+  req = urllib.request.Request('https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'})
   with urllib.request.urlopen(req) as url:
     data = json.loads(url.read().decode())
     global WidgetsManifest
@@ -86,7 +87,7 @@ def update():
     update_source('Album', 'text', Album)
     update_source('Duration', 'text', Duration)
     update_source('Position', 'text', Position)
-    update_source('Cover', 'url', CoverUrl or DefaultCoverUrl)
+    update_source('Cover', 'url', CoverUrl or DefaultCoverUrl or FallbackDefaultCoverUrl)
     try:
       update_source('Formatted', 'text', CustomFormat.format(player=Player, title=Title, artist=Artist, album=Album, duration=Duration, position=Position, positionPercent=PositionPercent))
     except:
@@ -99,7 +100,7 @@ def create_sources(props, prop):
   create_text_source('WNP-Album', 'N/A')
   create_text_source('WNP-Duration', '0:00')
   create_text_source('WNP-Position', '0:00')
-  create_cover_source('WNP-Cover', DefaultCoverUrl)
+  create_cover_source('WNP-Cover', DefaultCoverUrl or FallbackDefaultCoverUrl)
   try:
     create_text_source('WNP-Formatted', CustomFormat.format(player=Player, title=Title, artist=Artist, album=Album, duration=Duration, position=Position, positionPercent=PositionPercent))
   except:
@@ -161,7 +162,7 @@ def updateWidget():
       obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl))
+      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl or FallbackDefaultCoverUrl))
       source = obs.obs_source_create('browser_source', 'WNP-Widget', settings, None)
       obs.obs_scene_add(scene, source)
       obs.obs_scene_release(scene)
@@ -171,7 +172,7 @@ def updateWidget():
       obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl))
+      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl or FallbackDefaultCoverUrl))
       obs.obs_source_update(source, settings)
       obs.obs_data_release(settings)
     obs.obs_source_release(source)
