@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery.marquee@1.6.0/jquery.marquee.min.js"></script>
+  <script src="./scripts/socket.js"></script>
+  <script defer>
+    let lastTitle = ''
+    registerSocket((mediaInfo) => {
+      const { Title, Artist, CoverUrl, PositionPercent } = mediaInfo
+      document.getElementById('artist').innerText = Artist || 'N/A'
+      document.getElementById('cover').style.content = CoverUrl ? `url(${CoverUrl})` : 'var(--default-cover-url)'
+      const newTitle = Title || 'N/A'
+      if (lastTitle !== newTitle) {
+        lastTitle = newTitle
+        document.getElementById('title').innerText = newTitle
+        if (document.getElementById('title').scrollWidth > document.getElementById('title').offsetWidth) {
+          $(() => {
+            $('#title').marquee({
+              duration: 10000,
+              gap: 100,
+              duplicated: true,
+              pauseOnHover: false,
+              startVisible: true
+            })
+          })
+        }
+      }
+    })
+  </script>
+  <style>
+    * {
+      color: white;
+      font-size: 1em;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      white-space: nowrap;
+    }
+    body {
+      margin: 0px;
+    }
+    :root {
+      --default-cover-url: url('./images/nocover.png');
+    }
+    #widget {
+      display: flex;
+      background-color: #1e1e1e;
+      width: 1000px;
+      height: 250px;
+      overflow: hidden;
+    }
+    #cover {
+      content: var(--default-cover-url);
+      height: 100%;
+      width: auto;
+      aspect-ratio: 1;
+      object-fit: cover;
+      justify-content: center;
+      align-items: center;
+    }
+    #info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 2rem;
+    }
+    #artist {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      text-overflow: ellipsis;
+      color: #3bb673;
+      font-weight: 600;
+      overflow: hidden;
+      width: 680px;
+    }
+    #title {
+      overflow: hidden;
+      font-weight: 600;
+      color: #868686;
+      font-size: 3rem;
+      width: 680px;
+    }
+    #title * {
+      font-weight: 600;
+      color: #868686;
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div id='widget'>
+    <img id='cover'>
+    <div id='info'>
+      <div id='artist'>N/A</div>
+      <div id='title'>N/A</div>
+    </div>
+  </div>
+</body>
+</html>

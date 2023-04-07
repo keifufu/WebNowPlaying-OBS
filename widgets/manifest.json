@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Spotify",
+    "width": 1000,
+    "height": 250
+  },
+  {
+    "name": "Modern",
+    "width": 1000,
+    "height": 250
+  },
+  {
+    "name": "ModernCard",
+    "width": 700,
+    "height": 1000
+  },
+  {
+    "name": "Minimalistic",
+    "width": 1000,
+    "height": 250
+  }
+]

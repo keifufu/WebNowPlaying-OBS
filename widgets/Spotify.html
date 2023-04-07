@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery.marquee@1.6.0/jquery.marquee.min.js"></script>
+  <script src="./scripts/socket.js"></script>
+  <script defer>
+    let lastTitle = ''
+    registerSocket((mediaInfo) => {
+      const { Title, Artist, CoverUrl, PositionPercent } = mediaInfo
+      document.getElementById('artist').innerText = Artist || 'N/A'
+      document.getElementById('cover').style.content = CoverUrl ? `url(${CoverUrl})` : 'var(--default-cover-url)'
+      document.getElementById('progress').style.width = `${PositionPercent}%`
+      const newTitle = Title || 'N/A'
+      if (lastTitle !== newTitle) {
+        lastTitle = newTitle
+        document.getElementById('title').innerText = newTitle
+        if (document.getElementById('title').scrollWidth > document.getElementById('title').offsetWidth) {
+          $(() => {
+            $('#title').marquee({
+              duration: 10000,
+              gap: 100,
+              duplicated: true,
+              pauseOnHover: false,
+              startVisible: true
+            })
+          })
+        }
+      }
+    })
+  </script>
+  <style>
+    * {
+      color: white;
+      font-size: 1em;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      white-space: nowrap;
+    }
+    body {
+      margin: 0px;
+    }
+    :root {
+      --default-cover-url: url('./images/nocover.png');
+    }
+    #widget {
+      display: flex;
+      background-color: #1e1e1e;
+      width: 1000px;
+      height: 250px;
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+    #cover {
+      content: var(--default-cover-url);
+      height: 100%;
+      width: auto;
+      aspect-ratio: 1;
+      object-fit: cover;
+      justify-content: center;
+      align-items: center;
+      border-radius: 1.5rem 0 0 1.5rem;
+    }
+    #info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
+    #info-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+    #info-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 2rem;
+    }
+    #artist {
+      font-size: 2.3rem;
+      margin-bottom: 1rem;
+      color: #868686;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 35rem;
+    }
+    #title {
+      width: 35rem;
+      overflow: hidden;
+      color: #3bb673;
+      font-weight: 600;
+      font-size: 3rem;
+    }
+    #title * {
+      color: #3bb673;
+      font-weight: 600;
+      font-size: 3rem;
+    }
+    #progress-container {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: #1a1a1a;
+      width: 100%;
+    }
+    #icon {
+      width: 100px;
+      height: 100px;
+      margin-right: 3rem;
+    }
+    #progress {
+      width: 100%;
+      height: 0.7rem;
+      background: linear-gradient(90deg, #19291f 0%, #188b48 100%);
+      border-radius: 0 4rem 4rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div id='widget'>
+    <img id='cover'>
+    <div id='info'>
+      <div id='info-main'>
+        <div id='info-text'>
+          <div id='artist'>N/A</div>
+          <div id='title'>N/A</div>
+        </div>
+        <img id='icon' src="./images/spotify.png" />
+      </div>
+      <div id='progress-container'>
+        <div id='progress'></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
