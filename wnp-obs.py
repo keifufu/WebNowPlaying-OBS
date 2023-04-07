@@ -2,8 +2,6 @@ from pywnp import WNPRedux
 import obspython as obs
 import urllib.request, json
 
-# TODO: add custom css to widget source, to overwrite :root { --default-cover-url }
-
 # WNP Variables
 Player = 'N/A'
 Title  = 'N/A'
@@ -19,6 +17,9 @@ SelectedWidget = 'None'
 WidgetsManifest = None
 DefaultCoverUrl = 'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
 CustomFormat = '{title} - {artist} ({position}/{duration})    '
+
+CustomCSS = r'body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; } '
+CustomCSS += r':root { --default-cover-url: url("{DefaultCoverUrl}"); }'
 
 def script_description():
   description = '<b>WebNowPlaying for OBS</b>'
@@ -157,18 +158,20 @@ def updateWidget():
       current_scene = obs.obs_frontend_get_current_scene()
       scene = obs.obs_scene_from_source(current_scene)
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
+      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
+      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl))
       source = obs.obs_source_create('browser_source', 'WNP-Widget', settings, None)
       obs.obs_scene_add(scene, source)
       obs.obs_scene_release(scene)
       obs.obs_data_release(settings)
     else:
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
+      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
+      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl))
       obs.obs_source_update(source, settings)
       obs.obs_data_release(settings)
     obs.obs_source_release(source)
