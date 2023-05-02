@@ -6,10 +6,11 @@
   <script src="./scripts/socket.js"></script>
   <script defer>
     let lastTitle = ''
+    let lastCoverUrl = ''
     registerSocket((mediaInfo) => {
-      const { Title, Artist, CoverUrl } = mediaInfo
-      document.getElementById('artist').innerText = Artist || 'N/A'
-      const newTitle = Title || 'N/A'
+      const { title, artist, cover_url } = mediaInfo
+      document.getElementById('artist').innerText = artist || 'N/A'
+      const newTitle = title || 'N/A'
       if (lastTitle !== newTitle) {
         lastTitle = newTitle
         document.getElementById('title').innerText = newTitle
@@ -27,17 +28,19 @@
       }
       
       // We do this to not make the cover flicker
-      if (CoverUrl) {
-        lastCoverUrl = CoverUrl
-        const image = new Image()
-        image.src = CoverUrl
-        image.onload = () => {
-          document.getElementById('cover').style.content = `url(${CoverUrl})`
-          document.getElementById('bg').src = CoverUrl
-        }
-        image.onerror = () => {
-          document.getElementById('cover').style.content = 'var(--default-cover-url)'
-          document.getElementById('bg').src = ''
+      if (cover_url) {
+        if (cover_url !== lastCoverUrl) {
+          lastCoverUrl = cover_url
+          const image = new Image()
+          image.src = cover_url
+          image.onload = () => {
+            document.getElementById('cover').style.content = `url(${cover_url})`
+            document.getElementById('bg').src = cover_url
+          }
+          image.onerror = () => {
+            document.getElementById('cover').style.content = 'var(--default-cover-url)'
+            document.getElementById('bg').src = ''
+          }
         }
       } else {
         document.getElementById('cover').style.content = 'var(--default-cover-url)'

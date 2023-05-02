@@ -3,36 +3,36 @@ import obspython as obs
 import urllib.request, json
 
 # WNP Variables
-Player = 'N/A'
-Title  = 'N/A'
-Artist = 'N/A'
-Album = 'N/A'
-Duration = '0:00'
-Position = '0:00'
-PositionPercent = '0'
-CoverUrl = ''
+player_name = 'N/A'
+title  = 'N/A'
+artist = 'N/A'
+album = 'N/A'
+duration = '0:00'
+position = '0:00'
+position_percent = '0'
+cover_url = ''
 
 # Script Settings
-SelectedWidget = 'None'
-WidgetsManifest = None
-DefaultCoverUrl = ''
-CustomFormat = '{title} - {artist} ({position}/{duration})    '
+selected_widget = 'None'
+widgets_manifest = None
+default_cover_url = ''
+custom_format = '{title} - {artist} ({position}/{duration})    '
 
-FallbackDefaultCoverUrl = 'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
-CustomCSS = r'body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; } '
-CustomCSS += r':root { --default-cover-url: url("{DefaultCoverUrl}"); }'
+fallback_default_cover_url = 'https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/images/nocover.png'
+custom_css = r'body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; } '
+custom_css += r':root { --default-cover-url: url("{default_cover_url}"); }'
 
 def script_description():
   description = '<b>WebNowPlaying for OBS</b>'
   description += '<br>'
   description += 'Available placeholders:'
   description += '<br>'
-  description += '{player}, {title}, {artist}, {album}, {duration}, {position}, {positionPercent}'
+  description += '{player_name}, {title}, {artist}, {album}, {duration}, {position}, {position_percent}'
   return description
 
 def script_defaults(settings):
-  obs.obs_data_set_default_string(settings, 'custom_format', CustomFormat)
-  obs.obs_data_set_default_string(settings, 'default_cover_url', DefaultCoverUrl)
+  obs.obs_data_set_default_string(settings, 'custom_format', custom_format)
+  obs.obs_data_set_default_string(settings, 'default_cover_url', default_cover_url)
 
 def script_properties():
   props = obs.obs_properties_create()
@@ -42,8 +42,8 @@ def script_properties():
   req = urllib.request.Request('https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'})
   with urllib.request.urlopen(req) as url:
     data = json.loads(url.read().decode())
-    global WidgetsManifest
-    WidgetsManifest = data
+    global widgets_manifest
+    widgets_manifest = data
     for widget in data:
       obs.obs_property_list_add_string(list, widget['name'], widget['name'])
 
@@ -54,55 +54,55 @@ def script_properties():
   return props
 
 def script_update(settings):
-  global CustomFormat, DefaultCoverUrl, SelectedWidget
-  SelectedWidget = obs.obs_data_get_string(settings, 'selected_widget')
-  CustomFormat = obs.obs_data_get_string(settings, 'custom_format')
-  DefaultCoverUrl = obs.obs_data_get_string(settings, 'default_cover_url')
-  updateWidget()
+  global custom_format, default_cover_url, selected_widget
+  selected_widget = obs.obs_data_get_string(settings, 'selected_widget')
+  custom_format = obs.obs_data_get_string(settings, 'custom_format')
+  default_cover_url = obs.obs_data_get_string(settings, 'default_cover_url')
+  update_widget()
 
 def script_load(settings):
   def logger(type, message):
     print(f'WNP - {type}: {message}')
-  WNPRedux.Initialize(6534, '1.1.0', logger)
+  WNPRedux.start(6534, 6535, '1.2.0', logger)
   obs.timer_add(update, 250)
 
 def script_unload():
-  WNPRedux.Close()
+  WNPRedux.stop()
   obs.timer_remove(update)
 
 def update():
-  if WNPRedux.isInitialized:
-    global Player, Title, Artist, Album, Duration, Position, PositionPercent, CoverUrl
-    Player = WNPRedux.mediaInfo.Player or 'N/A'
-    Title = WNPRedux.mediaInfo.Title or 'N/A'
-    Artist = WNPRedux.mediaInfo.Artist or 'N/A'
-    Album = WNPRedux.mediaInfo.Album or 'N/A'
-    Duration = WNPRedux.mediaInfo.Duration
-    Position = WNPRedux.mediaInfo.Position
-    PositionPercent = str(int(WNPRedux.mediaInfo.PositionPercent))
-    CoverUrl = WNPRedux.mediaInfo.CoverUrl
-    update_source('Player', 'text', Player)
-    update_source('Title', 'text', Title)
-    update_source('Artist', 'text', Artist)
-    update_source('Album', 'text', Album)
-    update_source('Duration', 'text', Duration)
-    update_source('Position', 'text', Position)
-    update_source('Cover', 'url', CoverUrl or DefaultCoverUrl or FallbackDefaultCoverUrl)
+  if WNPRedux.is_started:
+    global player_name, title, artist, album, duration, position, position_percent, cover_url
+    player_name = WNPRedux.media_info.player_name or 'N/A'
+    title = WNPRedux.media_info.title or 'N/A'
+    artist = WNPRedux.media_info.artist or 'N/A'
+    album = WNPRedux.media_info.album or 'N/A'
+    duration = WNPRedux.media_info.duration
+    position = WNPRedux.media_info.position
+    position_percent = str(int(WNPRedux.media_info.position_percent))
+    cover_url = WNPRedux.media_info.cover_url
+    update_source('Player', 'text', player_name)
+    update_source('Title', 'text', title)
+    update_source('Artist', 'text', artist)
+    update_source('Album', 'text', album)
+    update_source('Duration', 'text', duration)
+    update_source('Position', 'text', position)
+    update_source('Cover', 'url', cover_url or default_cover_url or fallback_default_cover_url)
     try:
-      update_source('Formatted', 'text', CustomFormat.format(player=Player, title=Title, artist=Artist, album=Album, duration=Duration, position=Position, positionPercent=PositionPercent))
+      update_source('Formatted', 'text', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, positionPercent=position_percent))
     except:
       pass
 
 def create_sources(props, prop):
-  create_text_source('WNP-Player', 'N/A')
+  create_text_source('WNP-PlayerName', 'N/A')
   create_text_source('WNP-Title', 'N/A')
   create_text_source('WNP-Artist', 'N/A')
   create_text_source('WNP-Album', 'N/A')
   create_text_source('WNP-Duration', '0:00')
   create_text_source('WNP-Position', '0:00')
-  create_cover_source('WNP-Cover', DefaultCoverUrl or FallbackDefaultCoverUrl)
+  create_cover_source('WNP-Cover', default_cover_url or fallback_default_cover_url)
   try:
-    create_text_source('WNP-Formatted', CustomFormat.format(player=Player, title=Title, artist=Artist, album=Album, duration=Duration, position=Position, positionPercent=PositionPercent))
+    create_text_source('WNP-Formatted', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, positionPercent=position_percent))
   except:
     pass
 
@@ -146,9 +146,9 @@ def create_cover_source(name, url):
   obs.obs_source_release(source)
   return source
 
-def updateWidget():
-  if WidgetsManifest == None: return
-  if SelectedWidget == 'None':
+def update_widget():
+  if widgets_manifest == None: return
+  if selected_widget == 'None':
     source = obs.obs_get_source_by_name('WNP-Widget')
     if source is not None:
       obs.obs_source_remove(source)
@@ -159,20 +159,20 @@ def updateWidget():
       current_scene = obs.obs_frontend_get_current_scene()
       scene = obs.obs_scene_from_source(current_scene)
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
-      obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl or FallbackDefaultCoverUrl))
+      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{selected_widget}.html')
+      obs.obs_data_set_int(settings, 'height', next((t['height'] for t in widgets_manifest if t['name'] == selected_widget), 0))
+      obs.obs_data_set_int(settings, 'width', next((t['width'] for t in widgets_manifest if t['name'] == selected_widget), 0))
+      obs.obs_data_set_string(settings, 'css', custom_css.replace(r'{default_cover_url}', default_cover_url or fallback_default_cover_url))
       source = obs.obs_source_create('browser_source', 'WNP-Widget', settings, None)
       obs.obs_scene_add(scene, source)
       obs.obs_scene_release(scene)
       obs.obs_data_release(settings)
     else:
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{SelectedWidget}.html')
-      obs.obs_data_set_int(settings, 'height', next((t['height'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_int(settings, 'width', next((t['width'] for t in WidgetsManifest if t['name'] == SelectedWidget), 0))
-      obs.obs_data_set_string(settings, 'css', CustomCSS.replace(r'{DefaultCoverUrl}', DefaultCoverUrl or FallbackDefaultCoverUrl))
+      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{selected_widget}.html')
+      obs.obs_data_set_int(settings, 'height', next((t['height'] for t in widgets_manifest if t['name'] == selected_widget), 0))
+      obs.obs_data_set_int(settings, 'width', next((t['width'] for t in widgets_manifest if t['name'] == selected_widget), 0))
+      obs.obs_data_set_string(settings, 'css', custom_css.replace(r'{default_cover_url}', default_cover_url or fallback_default_cover_url))
       obs.obs_source_update(source, settings)
       obs.obs_data_release(settings)
     obs.obs_source_release(source)

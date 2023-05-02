@@ -6,12 +6,12 @@
   <script src="./scripts/socket.js"></script>
   <script defer>
     let lastTitle = ''
+    let lastCoverUrl = ''
     registerSocket((mediaInfo) => {
-      const { Title, Artist, CoverUrl, PositionPercent } = mediaInfo
-      document.getElementById('artist').innerText = Artist || 'N/A'
-      document.getElementById('cover').style.content = CoverUrl ? `url(${CoverUrl})` : 'var(--default-cover-url)'
-      document.getElementById('progress').style.width = `${PositionPercent}%`
-      const newTitle = Title || 'N/A'
+      const { title, artist, cover_url, position_percent } = mediaInfo
+      document.getElementById('artist').innerText = artist || 'N/A'
+      document.getElementById('progress').style.width = `${position_percent}%`
+      const newTitle = title || 'N/A'
       if (lastTitle !== newTitle) {
         lastTitle = newTitle
         document.getElementById('title').innerText = newTitle
@@ -26,6 +26,23 @@
             })
           })
         }
+      }
+
+      // We do this to not make the cover flicker
+      if (cover_url) {
+        if (lastCoverUrl !== cover_url) {
+          lastCoverUrl = cover_url
+          const image = new Image()
+          image.src = cover_url
+          image.onload = () => {
+            document.getElementById('cover').style.content = `url(${cover_url})`
+          }
+          image.onerror = () => {
+            document.getElementById('cover').style.content = 'var(--default-cover-url)'
+          }
+        }
+      } else {
+        document.getElementById('cover').style.content = 'var(--default-cover-url)'
       }
     })
   </script>

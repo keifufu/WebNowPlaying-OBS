@@ -21,3 +21,7 @@ If you delete a source, it will stay deleted until you click "Create Sources" ag
 # Updating
 - Replace wnp-obs.py with the latest wnp-obs.py from [Releases](https://github.com/keifufu/WebNowPlaying-Redux-OBS/releases/latest)
 - Open cmd and run `pip install --upgrade pywnp`
+
+# Known Issues
+- Reloading the script will cause it to spam errors.  
+If you need to reload it for some reason, please restart OBS.
