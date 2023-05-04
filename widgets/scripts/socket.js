@@ -1,20 +1,20 @@
 const defaultMediaInfo = {
-  State: 'STOPPED',
-  Player: '',
-  Title: '',
-  Artist: '',
-  Album: '',
-  CoverUrl: '',
-  Duration: '0:00',
-  DurationSeconds: 0,
-  Position: '0:00',
-  PositionSeconds: 0,
-  PositionPercent: 0,
-  Volume: 100,
-  Rating: 0,
-  RepeatState: 'NONE',
-  Shuffle: false,
-  Timestamp: 0
+  state: 'STOPPED',
+  player_name: '',
+  title: '',
+  artist: '',
+  album: '',
+  cover_url: '',
+  duration: '0:00',
+  duration_seconds: 0,
+  position: '0:00',
+  position_seconds: 0,
+  position_percent: 0,
+  volume: 100,
+  rating: 0,
+  repeat_mode: 'NONE',
+  shuffle_active: false,
+  timestamp: 0
 }
 
 function registerSocket(_onMediaInfoChange) {
@@ -51,9 +51,31 @@ function registerSocket(_onMediaInfoChange) {
     ws.onerror = () => retry()
     ws.onmessage = (e) => {
       try {
-        const mediaInfo = JSON.parse(e.data)
+        const mediaInfo = JSON.parse(mapJsonKeys(e.data))
         onMediaInfoChange(mediaInfo)
       } catch {}
     }
   }
+}
+
+// Maps keys from pywnp < 2.0.0 to pywnp > 2.0.0
+// Example: Player -> player_name
+function mapJsonKeys(jsonStr) {
+  return jsonStr
+    .replace('State', 'state')
+    .replace('player', 'player_name')
+    .replace('Title', 'title')
+    .replace('Artist', 'artist')
+    .replace('Album', 'album')
+    .replace('CoverUrl', 'cover_url')
+    .replace('Duration', 'duration')
+    .replace('DurationSeconds', 'duration_seconds')
+    .replace('Position', 'position')
+    .replace('PositionSeconds', 'position_seconds')
+    .replace('PositionPercent', 'position_percent')
+    .replace('Volume', 'volume')
+    .replace('Rating', 'rating')
+    .replace('RepeatState', 'repeat_mode')
+    .replace('Shuffle', 'shuffle_active')
+    .replace('Timestamp', 'timestamp')
 }
