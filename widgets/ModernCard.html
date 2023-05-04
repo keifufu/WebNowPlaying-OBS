@@ -3,26 +3,22 @@
 <head>
   <script src="./scripts/socket.js"></script>
   <script defer>
-    let lastCoverUrl = ''
     registerSocket((mediaInfo) => {
-      const { title, artist, cover_url } = mediaInfo
-      document.getElementById('artist').innerText = artist || 'N/A'
-      document.getElementById('title').innerText = title || 'N/A'
+      const { Title, Artist, CoverUrl } = mediaInfo
+      document.getElementById('artist').innerText = Artist || 'N/A'
+      document.getElementById('title').innerText = Title || 'N/A'
 
-      if (cover_url) {
-        if (cover_url !== lastCoverUrl) {
-          lastCoverUrl = cover_url
-          const image = new Image()
-          image.src = cover_url
-          image.onload = () => {
-            document.getElementById('widget').style.background = 'transparent'
-            document.getElementById('cover').style.content = `url(${cover_url})`
-            document.getElementById('bg').src = cover_url
-          }
-          image.onerror = () => {
-            document.getElementById('cover').style.content = 'var(--default-cover-url)'
-            document.getElementById('widget').style.background = '#1a1a1a'
-          }
+      if (CoverUrl) {
+        const image = new Image()
+        image.src = CoverUrl
+        image.onload = () => {
+          document.getElementById('widget').style.background = 'transparent'
+          document.getElementById('cover').style.content = `url(${CoverUrl})`
+          document.getElementById('bg').src = CoverUrl
+        }
+        image.onerror = () => {
+          document.getElementById('cover').style.content = 'var(--default-cover-url)'
+          document.getElementById('widget').style.background = '#1a1a1a'
         }
       } else {
         document.getElementById('cover').style.content = 'var(--default-cover-url)'
