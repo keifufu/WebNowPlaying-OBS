@@ -1,5 +1,6 @@
 # OBS Adapter for WebNowPlaying-Redux
-A OBS script to display information from [WebNowPlaying-Redux](https://github.com/keifufu/WebNowPlaying-Redux)
+A OBS script to display information from [WebNowPlaying-Redux](https://github.com/keifufu/WebNowPlaying-Redux)  
+It also supports a lot of desktop players! Read more [here](https://github.com/keifufu/WebNowPlaying-Redux/blob/main/NativeAPIs.md).
 
 ![widgets](./images/widgets.jpg)
 
@@ -23,5 +24,6 @@ If you delete a source, it will stay deleted until you click "Create Sources" ag
 - Open cmd and run `pip install --upgrade pywnp`
 
 # Known Issues
-- Reloading the script will cause it to spam errors.  
-If you need to reload it for some reason, please restart OBS.
+- Reloading the script might cause it to spam errors or not work at all.  
+If you need to reload it for some reason, restart OBS.  
+If you DID reload the script and it doesn't work anymore even after restarting OBS, restart your computer.

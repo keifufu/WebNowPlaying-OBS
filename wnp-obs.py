@@ -1,6 +1,8 @@
+from threading import Thread
+import urllib.request, json
 from pywnp import WNPRedux
 import obspython as obs
-import urllib.request, json
+import time
 
 # WNP Variables
 player_name = 'N/A'
@@ -63,11 +65,13 @@ def script_update(settings):
 def script_load(settings):
   def logger(type, message):
     print(f'WNP - {type}: {message}')
-  WNPRedux.start(6534, 6535, '1.2.0', logger)
+  print('load')
+  WNPRedux.start(6534, '2.0.0', logger)
   obs.timer_add(update, 250)
 
 def script_unload():
-  WNPRedux.stop()
+  Thread(target=WNPRedux.stop).start()
+  time.sleep(1) # sorry but this at least prevents reloading the script breaking it
   obs.timer_remove(update)
 
 def update():
