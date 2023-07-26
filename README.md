@@ -17,7 +17,7 @@ https://wnp.keifufu.dev/obs/getting-started
 ## Adding python to OBS
 
 - Install Python 3.10 ([link](https://www.python.org/downloads/release/python-31010/)) and sure to check "Add python.exe to PATH".
-- In OBS, go to Tools -> Scripts -> Python Settings, and add the path to your Python installation.
+- In OBS, go to Tools -> Scripts -> Python Settings, and add the path to your Python installation.  
   (On windows, run `where python` in cmd to find the installation location.)
 
 ## Installing the script
