@@ -1,6 +1,7 @@
-# OBS Adapter for WebNowPlaying-Redux
-A OBS script to display information from [WebNowPlaying-Redux](https://github.com/keifufu/WebNowPlaying-Redux)  
-It also supports a lot of desktop players! Read more [here](https://github.com/keifufu/WebNowPlaying-Redux/blob/main/NativeAPIs.md).
+# OBS Adapter for WebNowPlaying
+
+A OBS script to display information from [WebNowPlaying](https://github.com/keifufu/WebNowPlaying)  
+It also supports a lot of desktop players! Read more [here](https://wnp.keifufu.dev/desktop-players).
 
 ![widgets](./images/widgets.jpg)
 
@@ -23,12 +24,12 @@ https://wnp.keifufu.dev/obs/getting-started
 ## Installing the script
 
 - Open the command prompt and run `pip install pywnp`
-- Download [wnp-obs.py](https://github.com/keifufu/WebNowPlaying-Redux-OBS/releases/latest/download/wnp-obs.py), then add it in the Scripts tab.
+- Download [wnp-obs.py](https://github.com/keifufu/WebNowPlaying-OBS/releases/latest/download/wnp-obs.py), then add it in the Scripts tab.
 - Select a Widget or click "Create Sources" in the Scripts window.
 
 ## Updating
 
-- Replace `wnp-obs.py` with the latest version from releases: [wnp-obs.py](https://github.com/keifufu/WebNowPlaying-Redux-OBS/releases/latest/download/wnp-obs.py).
+- Replace `wnp-obs.py` with the latest version from releases: [wnp-obs.py](https://github.com/keifufu/WebNowPlaying-OBS/releases/latest/download/wnp-obs.py).
 - Open the command prompt and run `pip install --upgrade pywnp`.
 
 ## Known Issues
