@@ -13,6 +13,7 @@ duration = '0:00'
 position = '0:00'
 position_percent = '0'
 cover_url = ''
+duration_of_total = '00:00/00:00'
 
 # Script Settings
 selected_widget = 'None'
@@ -41,13 +42,16 @@ def script_properties():
 
   list = obs.obs_properties_add_list(props, 'selected_widget', 'Widget', obs.OBS_COMBO_TYPE_LIST, obs.OBS_COMBO_FORMAT_STRING)
   obs.obs_property_list_add_string(list, 'None', 'None')
-  req = urllib.request.Request('https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'})
-  with urllib.request.urlopen(req) as url:
-    data = json.loads(url.read().decode())
-    global widgets_manifest
-    widgets_manifest = data
-    for widget in data:
-      obs.obs_property_list_add_string(list, widget['name'], widget['name'])
+  try:
+    req = urllib.request.Request('https://raw.githubusercontent.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/manifest.json', headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(req) as url:
+      data = json.loads(url.read().decode())
+      global widgets_manifest
+      widgets_manifest = data
+      for widget in data:
+        obs.obs_property_list_add_string(list, widget['name'], widget['name'])
+  except:
+    pass
 
   obs.obs_properties_add_text(props, 'custom_format', 'Format', obs.OBS_TEXT_DEFAULT)
   obs.obs_properties_add_button(props, 'cs', 'Create Sources', create_sources)
@@ -74,26 +78,43 @@ def script_unload():
   time.sleep(1) # sorry but this at least prevents reloading the script breaking it
   obs.timer_remove(update)
 
+def get_progress_bar(percent, width=20):
+  try:
+    p = float(percent)
+    completed = int(width * (p / 100))
+    remaining = width - completed
+    return '█' * completed + '░' * remaining
+  except:
+    return '░' * width
+
 def update():
   if WNPRedux.is_started:
-    global player_name, title, artist, album, duration, position, position_percent, cover_url
+    global player_name, title, artist, album, duration, position, position_percent, cover_url, duration_of_total
     player_name = WNPRedux.media_info.player_name or 'N/A'
     title = WNPRedux.media_info.title or 'N/A'
     artist = WNPRedux.media_info.artist or 'N/A'
     album = WNPRedux.media_info.album or 'N/A'
     duration = WNPRedux.media_info.duration
     position = WNPRedux.media_info.position
+    duration_of_total = position + " / " + duration
     position_percent = str(int(WNPRedux.media_info.position_percent))
     cover_url = WNPRedux.media_info.cover_url
-    update_source('Player', 'text', player_name)
+    
+    update_source('PlayerName', 'text', player_name)
     update_source('Title', 'text', title)
     update_source('Artist', 'text', artist)
     update_source('Album', 'text', album)
     update_source('Duration', 'text', duration)
     update_source('Position', 'text', position)
+    update_source('DurationOfTotal', 'text', duration_of_total)
     update_source('Cover', 'url', cover_url or default_cover_url or fallback_default_cover_url)
+    
+    # Progress Bar Update
+    bar_text = get_progress_bar(position_percent)
+    update_source('Progress', 'text', f"{bar_text} {position_percent}%")
+
     try:
-      update_source('Formatted', 'text', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, positionPercent=position_percent))
+      update_source('Formatted', 'text', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, position_percent=position_percent))
     except:
       pass
 
@@ -104,9 +125,11 @@ def create_sources(props, prop):
   create_text_source('WNP-Album', 'N/A')
   create_text_source('WNP-Duration', '0:00')
   create_text_source('WNP-Position', '0:00')
+  create_text_source('WNP-DurationOfTotal', '0:00')
+  create_text_source('WNP-Progress', '░░░░░░░░░░░░░░░░░░░░ 0%')
   create_cover_source('WNP-Cover', default_cover_url or fallback_default_cover_url)
   try:
-    create_text_source('WNP-Formatted', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, positionPercent=position_percent))
+    create_text_source('WNP-Formatted', custom_format.format(player_name=player_name, title=title, artist=artist, album=album, duration=duration, position=position, position_percent=position_percent))
   except:
     pass
 
@@ -152,13 +175,12 @@ def create_cover_source(name, url):
 
 def update_widget():
   if widgets_manifest == None: return
+  source = obs.obs_get_source_by_name('WNP-Widget')
   if selected_widget == 'None':
-    source = obs.obs_get_source_by_name('WNP-Widget')
     if source is not None:
       obs.obs_source_remove(source)
       obs.obs_source_release(source)
   else:
-    source = obs.obs_get_source_by_name('WNP-Widget')
     if source is None:
       current_scene = obs.obs_frontend_get_current_scene()
       scene = obs.obs_scene_from_source(current_scene)
@@ -180,4 +202,3 @@ def update_widget():
       obs.obs_source_update(source, settings)
       obs.obs_data_release(settings)
     obs.obs_source_release(source)
-    return source
