@@ -185,7 +185,7 @@ def update_widget():
       current_scene = obs.obs_frontend_get_current_scene()
       scene = obs.obs_scene_from_source(current_scene)
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{selected_widget}.html')
+      obs.obs_data_set_string(settings, 'url', f'https://keifufu.github.io/WebNowPlaying-OBS/widgets/{selected_widget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in widgets_manifest if t['name'] == selected_widget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in widgets_manifest if t['name'] == selected_widget), 0))
       obs.obs_data_set_string(settings, 'css', custom_css.replace(r'{default_cover_url}', default_cover_url or fallback_default_cover_url))
@@ -195,7 +195,7 @@ def update_widget():
       obs.obs_data_release(settings)
     else:
       settings = obs.obs_data_create()
-      obs.obs_data_set_string(settings, 'url', f'https://raw.githack.com/keifufu/WebNowPlaying-Redux-OBS/main/widgets/{selected_widget}.html')
+      obs.obs_data_set_string(settings, 'url', f'https://keifufu.github.io/WebNowPlaying-OBS/widgets/{selected_widget}.html')
       obs.obs_data_set_int(settings, 'height', next((t['height'] for t in widgets_manifest if t['name'] == selected_widget), 0))
       obs.obs_data_set_int(settings, 'width', next((t['width'] for t in widgets_manifest if t['name'] == selected_widget), 0))
       obs.obs_data_set_string(settings, 'css', custom_css.replace(r'{default_cover_url}', default_cover_url or fallback_default_cover_url))
